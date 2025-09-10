@@ -11,7 +11,7 @@ on:
  
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest   # Gebruik Windows runner ipv. Ubuntu
     steps:
       - name: Haal de repository op
         uses: actions/checkout@v4
@@ -19,24 +19,15 @@ jobs:
       - name: Installeer .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
- 
-      - name: Installeer MAUI workloads
-        run: dotnet workload install maui-android
+          dotnet-version: '8.0.x'   # Installeer laatste .NET 
  
       - name: Herstel afhankelijkheden
-        run: |
-          dotnet restore Grocery.App/Grocery.App.csproj -p:TargetFramework=net8.0-android
-          dotnet restore Grocery.Core/Grocery.Core.csproj -p:TargetFramework=net8.0
-          dotnet restore Grocery.Core.Data/Grocery.Core.Data.csproj -p:TargetFramework=net8.0
+        run: dotnet restore
  
-      - name: Build Android-app
-        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release --no-restore
-
-      - name: Build Core libs
-        run: |
-          dotnet build Grocery.Core/Grocery.Core.csproj -f net8.0 --configuration Release --no-restore
-          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0 --configuration Release --no-restore
+      - name: Bouw de applicatie (Windows target)
+        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-windows10.0.19041.0 --configuration Release --no-restore
+        # Forceer Windows target bij build, zodat geen iOS/MacCatalyst geprobeert wordt
  
-      - name: Voer unit tests uit
-        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
+      - name: Voer unit tests uit (Core libraries)
+        run: dotnet test Grocery.Core/Grocery.Core.csproj -f net8.0 --configuration Release --no-build --verbosity normal
+        #Run unittests alleen tegen net8.0, geen mobiele targets
