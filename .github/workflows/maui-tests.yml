@@ -1,5 +1,5 @@
 name: MAUI Unit Tests
- 
+
 on:
   push:
     branches:
@@ -8,35 +8,35 @@ on:
   pull_request:
     branches:
       - main
- 
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Haal de repository op
         uses: actions/checkout@v4
- 
+
       - name: Installeer .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
- 
+
       - name: Installeer Android workload
         run: dotnet workload install maui-android
- 
-      - name: Herstel afhankelijkheden
-        run: dotnet restore
- 
-      # Bouw alleen de Android target van Grocery.App
-      - name: Build Android-app
+
+      - name: Herstel afhankelijkheden (alleen Android en .NET 8)
+        run: |
+          dotnet restore Grocery.App/Grocery.App.csproj -f net8.0-android
+          dotnet restore Grocery.Core/Grocery.Core.csproj -f net8.0
+          dotnet restore Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0
+
+      - name: Build Android-app (alleen Android target)
         run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release --no-restore
- 
-      # Bouw/test alleen .NET 8 (geen iOS/maccatalyst) voor Core libs
-      - name: Build Core
-        run: dotnet build Grocery.Core/Grocery.Core.csproj -f net8.0 --configuration Release --no-restore
 
-      - name: Build Core.Data
-        run: dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0 --configuration Release --no-restore
+      - name: Build Core libs (alleen net8.0)
+        run: |
+          dotnet build Grocery.Core/Grocery.Core.csproj -f net8.0 --configuration Release --no-restore
+          dotnet build Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0 --configuration Release --no-restore
 
-      - name: Unit tests (Core only)
+      - name: Voer unit tests uit (Core only)
         run: dotnet test Grocery.Core/Grocery.Core.csproj -f net8.0 --configuration Release --no-build --verbosity normal
