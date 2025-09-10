@@ -5,6 +5,8 @@ In deze versie zijn de wijzigingen doorgevoerd en is de code compleet.
 **UC01 Tonen boodschappenlijsten**  
 Is compleet.
 
+Santa is real!
+
 **UC02 Tonen inhoud boodschappenlijst**   
 In het bestand `GroceryListItem.cs` uit het project Grocery.Core.Models:
 - De member variabelen wijzigen in properties
