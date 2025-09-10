@@ -11,7 +11,7 @@ on:
  
 jobs:
   test:
-    runs-on: windows-latest   # Gebruik Windows runner ipv. Ubuntu
+    runs-on: windows-latest
     steps:
       - name: Haal de repository op
         uses: actions/checkout@v4
@@ -19,15 +19,13 @@ jobs:
       - name: Installeer .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'   # Installeer laatste .NET 
+          dotnet-version: '8.0.x'
  
-      - name: Herstel afhankelijkheden
-        run: dotnet restore
+      - name: Herstel afhankelijkheden (Windows target + RID)
+        run: dotnet restore Grocery.App/Grocery.App.csproj -f net8.0-windows10.0.19041.0 -r win-x64
  
-      - name: Bouw de applicatie (Windows target)
-        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-windows10.0.19041.0 --configuration Release --no-restore
-        # Forceer Windows target bij build, zodat geen iOS/MacCatalyst geprobeert wordt
+      - name: Bouw de applicatie (Windows target + RID)
+        run: dotnet build Grocery.App/Grocery.App.csproj -f net8.0-windows10.0.19041.0 -r win-x64 --configuration Release --no-restore
  
-      - name: Voer unit tests uit (Core libraries)
+      - name: Voer unit tests uit (Core only)
         run: dotnet test Grocery.Core/Grocery.Core.csproj -f net8.0 --configuration Release --no-build --verbosity normal
-        #Run unittests alleen tegen net8.0, geen mobiele targets
