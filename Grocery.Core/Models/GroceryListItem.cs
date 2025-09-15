@@ -7,7 +7,7 @@
         public int Amount { get; set; }
         public GroceryListItem(int id, int groceryListId, int productId, int amount) : base(id, "")
         {
-            GroceryListId = groceryListId;      //Todo gedaan, assigned values to properties
+            GroceryListId = groceryListId;      //Todo done, assigned values to properties
             ProductId = productId;
             Amount = amount;
         }
